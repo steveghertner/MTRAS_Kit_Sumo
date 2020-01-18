@@ -74,10 +74,12 @@ void loop(){
   avgReading=sumOfReadings/NUM_SENSORS;
   //Serial.println(avgReading);
   if(avgReading<RING_BORDER_THRESHOLD){  //if at ring border, turn then and go forward
+    backup();
+    delay(750);
     turn();
     delay(750); //time to allow turn, change time to make turn longer/shorter
     forward();  //go foward for some time to clear border
-    delay(1000);
+    //delay(500);
   }else{ //if not at ring border then
   if(objectFound){//if see oponent, then go forward
     forward();
