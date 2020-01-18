@@ -86,7 +86,7 @@ void loop(){
    }else{
     turn(); // if object no found then turn
    }
-    delay(100); //movement interval time before scanning again
+    //delay(100); //movement interval time before scanning again
     scan(); //scan to see if see opponent  
   }
 }
