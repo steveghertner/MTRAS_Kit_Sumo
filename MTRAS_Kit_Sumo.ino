@@ -2,6 +2,17 @@
 MTRAS SUMO robot kit example code.
 Base code for SUMO kit build Jan 2020
 
+Changelog:
+02-26-2022 replaced foundObject with leaky accumulator.  Issue was that the robot would start
+            toward an oponent but would then jump back into turning and scanning.  Adding the
+            leaky accumulator code seemed to really help. 
+
+TO DO:
+  -consider timing amount of time turning and searching for oponent. Currently, two competitors 
+  get hooked parallel to each other and just keep spinning because both robots spin in the same
+  direction while searching for the other robot.  After the time elapses move foward or backwards a bit
+  then try again.
+
 Libraries Required: 
   QTRSensors pololu library version 4
   NewPing
@@ -38,6 +49,7 @@ int buttonState = 0;         // variable for reading the pushbutton status.
 const int buttonPin = A0;     // Pin number of the pushbutton pin.
 //variables used for line sensing
 unsigned int sensorValues[NUM_SENSORS];
+int foundAccumulator = 0; //used as a "leaky accumulator" in determining if robot is found
 
 void setup(){
   
@@ -81,7 +93,8 @@ void loop(){
     forward();  //go foward for some time to clear border
     //delay(500);
   }else{ //if not at ring border then
-  if(objectFound){//if see oponent, then go forward
+  //if(objectFound){//if see oponent, then go forward
+    if(foundAccumulator>0){
     forward();
    }else{
     turn(); // if object no found then turn
@@ -131,9 +144,17 @@ void scan() {
   if (distance < triggerDistance) { // The robot saw something within the trigger distance.
    //forward();
    objectFound=true;  //set flag that opponent is found
+   foundAccumulator+= 5;
   }else{
     objectFound=false;
+    foundAccumulator-=1;
   }
+
+  //constrain foundAccumulator
+  if(foundAccumulator<0)
+    foundAccumulator=0;
+  if (foundAccumulator>20)
+    foundAccumulator=20; 
 //else scan();
   
 }
